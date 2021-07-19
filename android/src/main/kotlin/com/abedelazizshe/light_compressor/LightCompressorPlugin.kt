@@ -65,17 +65,7 @@ class LightCompressorPlugin : FlutterPlugin, MethodCallHandler,
                     else -> VideoQuality.MEDIUM
                 }
 
-                if (Build.VERSION.SDK_INT >= 23) {
-                    val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    if (!hasPermissions(applicationContext, permissions)) {
-                        ActivityCompat.requestPermissions(activity, permissions, 1)
-                        compressVideo(path, destinationPath, result, quality, isMinBitRateEnabled, keepOriginalResolution)
-                    } else {
-                        compressVideo(path, destinationPath, result, quality, isMinBitRateEnabled, keepOriginalResolution)
-                    }
-                } else {
-                    compressVideo(path, destinationPath, result, quality, isMinBitRateEnabled, keepOriginalResolution)
-                }
+                compressVideo(path, destinationPath, result, quality, isMinBitRateEnabled, keepOriginalResolution)
             }
             "cancelCompression" -> {
                 VideoCompressor.cancel()
@@ -140,17 +130,6 @@ class LightCompressorPlugin : FlutterPlugin, MethodCallHandler,
     }
 
     private fun buildResponseBody(tag: String, response: Any): Map<String, Any> = mapOf(tag to response)
-
-    private fun hasPermissions(context: Context?, permissions: Array<String>): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null) {
-            for (permission in permissions) {
-                if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
-                    return false
-                }
-            }
-        }
-        return true
-    }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         this.activity = binding.activity
